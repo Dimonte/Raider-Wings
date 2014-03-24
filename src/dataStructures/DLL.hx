@@ -1,4 +1,5 @@
 package dataStructures;
+import dataStructures.DLLNode;
 
 
 /**
@@ -9,6 +10,9 @@ class DLL
 {
 	public var _head:DLLNode;
 	public var _tail:DLLNode;
+	
+	inline static var globalNodeCacheSize:Int = 30000;
+	static var nodeCache:List<DLLNode> = new List<DLLNode>();
 	
 	public function new() 
 	{
@@ -21,7 +25,7 @@ class DLL
 	
 	public function append(object:Dynamic):DLLNode
 	{
-		var dllNode:DLLNode = new DLLNode();
+		var dllNode:DLLNode = getDLLNode();
 		dllNode.val = object;
 		if (_head == null) 
 		{
@@ -33,6 +37,17 @@ class DLL
 			_tail = dllNode;
 		}
 		return dllNode;
+	}
+	
+	function getDLLNode():DLLNode
+	{
+		if (nodeCache.length > 0)
+		{
+			var node:DLLNode = nodeCache.pop();
+			node.val = node.next = node.previous = null;
+			return node;
+		}
+		return new DLLNode();
 	}
 	
 	public function remove(node:DLLNode):Void
@@ -51,10 +66,30 @@ class DLL
 		{
 			node.previous.next = node.next;
 		}
+		
+		if (nodeCache.length < globalNodeCacheSize)
+		{
+			reuseNode(node);
+		}
+	}
+	
+	function reuseNode(node:DLLNode) 
+	{
+		nodeCache.push(node);
 	}
 	
 	public function clear():Void
 	{
+		
+		var node:DLLNode = _head;
+		var nextNode:DLLNode = node;
+		while (nextNode != null)
+		{
+			node = nextNode;
+			nextNode = nextNode.next;
+			reuseNode(node);
+		}
+		
 		_tail = null;
 		_head = null;
 	}

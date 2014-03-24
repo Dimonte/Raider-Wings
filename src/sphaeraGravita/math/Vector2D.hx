@@ -1,4 +1,5 @@
 ﻿package sphaeraGravita.math;
+import sphaeraGravita.math.Vector2D;
 
 
 /**
@@ -112,6 +113,12 @@ class Vector2D
 	public function toString():String
 	{
 		return "(" + x + "," + y + ")";
+	}
+	
+	public function copyFrom(source:Vector2D) 
+	{
+		x = source.x;
+		y = source.y;
 	}
 	
 }

@@ -70,8 +70,8 @@ class Bullet extends GameEntity
 		{
 			var trail:GameEntity = world.getReusableEntityByType(EntityType.RAILGUN_TRAIL);
 			trail.reset();
-			trail.position = position.clone();
-			trail.speed = speed.clone();
+			trail.position.copyFrom(position);
+			trail.speed.copyFrom(speed);
 			world.addParticle(trail);
 		}
 		#end

@@ -3,6 +3,7 @@ package sphaeraGravita.spacePartitioning;
 import game.GameEntity;
 import game.Tile;
 import sphaeraGravita.math.Vector2D;
+import sphaeraGravita.spacePartitioning.GridCell;
 /**
  * ...
  * @author Dmitry Barabanschikov
@@ -130,7 +131,8 @@ class UniformGrid
 	
 	public function placeActiveObject(activeObject:GameEntity):Void
 	{
-		var overlappingCells:Array<GridCell> = getCellsBetweenPoints(activeObject.worldAABB.lowerBound, activeObject.worldAABB.upperBound);
+		var overlappingCells:Array<GridCell> = activeObject.overlappingCells != null ? activeObject.overlappingCells : new Array<GridCell>();
+		getCellsBetweenPoints(activeObject.worldAABB.lowerBound, activeObject.worldAABB.upperBound, overlappingCells);
 		activeObject.overlappingCells = overlappingCells;
 		for (i in 0...overlappingCells.length) 
 		{
@@ -145,13 +147,17 @@ class UniformGrid
 		}
 	}
 	
-	public function getCellsBetweenPoints(pointOne:Vector2D, pointTwo:Vector2D):Array<GridCell>
+	public function getCellsBetweenPoints(pointOne:Vector2D, pointTwo:Vector2D, ?overlappingCellsHolder:Array<GridCell> = null):Array<GridCell>
 	{
 		var startX:Int = Std.int(pointOne.x / CELL_SIZE);
 		var startY:Int = Std.int(pointOne.y / CELL_SIZE);
 		var endX:Int = Std.int(pointTwo.x / CELL_SIZE) + 1;
 		var endY:Int = Std.int(pointTwo.y / CELL_SIZE) + 1;
-		var cellArray:Array<GridCell> = [];
+		var cellArray:Array<GridCell> = overlappingCellsHolder != null ? overlappingCellsHolder : [];
+		while (cellArray.length > 0)
+		{
+			cellArray.pop();
+		}
 		for (i in startX...endX)
 		{
 			for (j in  startY...endY) 
